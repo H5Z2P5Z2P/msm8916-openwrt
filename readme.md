@@ -29,6 +29,7 @@ All devices use the Qualcomm MSM8916 SoC with 384 MB RAM and 4 GB eMMC.
 
 - **UZ801v3** (`yiming-uz801v3`) -- USB dongle form factor.
 - **UF02** (`generic-uf02`) -- USB dongle form factor, most likely with only asian bands. Can be somewhat changed via QPST and the `qcn` file from UZ801.
+- **UFI-001C** (`generic-ufi001c`) -- MSM8916 USB modem stick using a stock-informed OpenWrt GPT that preserves modem/persist radio firmware partitions.
 
 MF68E and M9S device support has been moved to the [TBR](TBR/readme.md) directory for reference. See that README for re-integration instructions.
 
@@ -63,7 +64,7 @@ MF68E and M9S device support has been moved to the [TBR](TBR/readme.md) director
 
 GHA workflows automatically resolve the **latest OpenWrt 25.12.x** tag. Trigger manually from the Actions tab:
 
-- **Build firmware**: `build.yml` — select a device (`uz801`, `uf02`, or `all`)
+- **Build firmware**: `build.yml` — select a device (`uz801`, `uf02`, `ufi001c`, or `all`)
 - **Build packages**: `build-package.yml` — builds `luci-app-tailscale`, `uci-usb-gadget`, and `luci-app-usb-gadget` in APK and IPK formats
 
 ### Local (snapshot builds)
@@ -107,7 +108,7 @@ OPENWRT_VERSION=v24.10.2 docker compose build builder --no-cache
    ./openwrt-msm89xx-msm8916-*-flash.sh
    ```
 
-   > The script flashes entirely via EDL (no fastboot step). It automatically backs up radio partitions, writes the new GPT, firmware, boot and rootfs, and restores the backed-up partitions.
+   > The script flashes entirely via EDL (no fastboot step). It backs up and restores required radio/NV partitions where possible, writes the new GPT, firmware, boot and rootfs, and users must keep a full EDL backup as the recovery path.
 
 ### Accessing Boot Modes
 
@@ -122,6 +123,10 @@ OPENWRT_VERSION=v24.10.2 docker compose build builder --no-cache
 - **EDL mode**:
   - From OEM: `adb reboot bootloader`, flash `lk2nd` aboot. Reboot pressing the button.
   - From OpenWrt: Insert device while holding the button.
+
+#### UFI-001C
+- **EDL mode**: Hold the only button while inserting the device into USB. The host should show Qualcomm 9008 mode, typically `05c6:9008`.
+- **Backup first**: Create and keep a full EDL backup before flashing. The OpenWrt layout preserves and restores radio-related partitions, but the full backup is still the recovery path.
 
 ## Troubleshooting
 

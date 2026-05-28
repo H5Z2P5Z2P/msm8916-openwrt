@@ -12,6 +12,7 @@ on:
           - all
           - uz801
           - uf02
+          - ufi001c
 
 env:
   UPLOAD_FIRMWARE: true
@@ -42,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        device: ${{ fromJSON((inputs.device == 'all' || inputs.device == '') && '["uz801","uf02"]' || format('["{0}"]', inputs.device)) }}
+        device: ${{ fromJSON((inputs.device == 'all' || inputs.device == '') && '["uz801","uf02","ufi001c"]' || format('["{0}"]', inputs.device)) }}
 
     steps:
     - name: Checkout
@@ -119,6 +120,7 @@ jobs:
         name: openwrt_firmware_${{ matrix.device }}_${{needs.resolve-version.outputs.openwrt_version}}_${{ env.FILE_DATE }}
         path: |
           ${{ env.FIRMWARE }}/openwrt-msm89xx-*-squashfs-gpt_both0.bin
+          ${{ env.FIRMWARE }}/openwrt-msm89xx-*-ufi001c-gpt_both0.bin
           ${{ env.FIRMWARE }}/openwrt-msm89xx-*-squashfs-boot.img
           ${{ env.FIRMWARE }}/openwrt-msm89xx-*-squashfs-system.img
           ${{ env.FIRMWARE }}/openwrt-msm89xx-*.manifest

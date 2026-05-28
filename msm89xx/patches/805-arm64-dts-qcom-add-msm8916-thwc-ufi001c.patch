@@ -1,0 +1,71 @@
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/msm8916-thwc-ufi001c.dts
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++/dts-v1/;
++
++#include "msm8916-ufi.dtsi"
++
++#include <dt-bindings/leds/common.h>
++
++/ {
++	model = "ufi-001c/ufi-001b 4G Modem Stick";
++	compatible = "thwc,ufi001c", "qcom,msm8916";
++};
++
++&button_restart {
++	gpios = <&tlmm 37 GPIO_ACTIVE_HIGH>;
++};
++
++&led_b {
++	gpios = <&tlmm 20 GPIO_ACTIVE_HIGH>;
++};
++
++&led_g {
++	gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
++};
++
++&led_r {
++	gpios = <&tlmm 22 GPIO_ACTIVE_HIGH>;
++};
++
++&button_default {
++	pins = "gpio37";
++	bias-pull-down;
++};
++
++&gpio_leds_default {
++	pins = "gpio20", "gpio21", "gpio22";
++};
++
++&mpss {
++	pinctrl-0 = <&sim_ctrl_default>, <&sim_ctrl_gpio1_default>, <&sim_ctrl_gpio2_default>;
++	pinctrl-names = "default";
++};
++
++&tlmm {
++	sim_ctrl_default: sim-ctrl-default-state {
++		pins = "gpio0", "gpio3";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++		output-low;
++	};
++
++	sim_ctrl_gpio1_default: sim-ctrl-gpio1-default-state {
++		pins = "gpio1";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++		output-low;
++	};
++
++	sim_ctrl_gpio2_default: sim-ctrl-gpio2-default-state {
++		pins = "gpio2";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++		output-high;
++	};
++};

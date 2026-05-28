@@ -7,6 +7,16 @@ define Build/generate-squashfs-gpt
   $(TOPDIR)/target/linux/$(BOARD)/image/generate_squashfs_gpt.sh $@
 endef
 
+define Build/generate-ufi001c-gpt
+  chmod +x $(TOPDIR)/target/linux/$(BOARD)/image/generate_ufi001c_gpt.sh
+  $(TOPDIR)/target/linux/$(BOARD)/image/generate_ufi001c_gpt.sh $@
+endef
+
+define Build/install-ufi001c-flasher
+  $(CP) $(TOPDIR)/target/linux/$(BOARD)/image/flash_ufi001c.sh $@
+  chmod +x $@
+endef
+
 define Build/install-flasher
   $(CP) $(TOPDIR)/target/linux/$(BOARD)/image/flash.sh $@
   chmod +x $@
@@ -49,5 +59,22 @@ define Device/generic-uf02
                      msm-firmware-dumper
 endef
 TARGET_DEVICES += generic-uf02
+
+define Device/generic-ufi001c
+  $(Device/msm8916)
+  DEVICE_VENDOR := Tong Heng Wei Chuang
+  DEVICE_MODEL := UFI-001C
+  DEVICE_DTS := msm8916-thwc-ufi001c
+  CMDLINE := "earlycon console=tty0 console=ttyMSM0,115200 root=/dev/mmcblk0p23 rootfstype=squashfs rootwait"
+  FILESYSTEMS := squashfs
+  ARTIFACTS := ufi001c-gpt_both0.bin flash.sh firmware.zip
+  ARTIFACT/ufi001c-gpt_both0.bin := generate-ufi001c-gpt
+  ARTIFACT/flash.sh := install-ufi001c-flasher
+  ARTIFACT/firmware.zip := generate-firmware
+  DEVICE_PACKAGES := wpad-basic-wolfssl rmtfs uci-usb-gadget \
+                     block-mount f2fs-tools \
+                     msm-firmware-dumper
+endef
+TARGET_DEVICES += generic-ufi001c
 
 endif

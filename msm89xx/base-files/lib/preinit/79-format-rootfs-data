@@ -2,7 +2,30 @@
 # /lib/preinit/79-format-rootfs-data
 # Automatically format rootfs_data partition if empty
 
-ROOTFS_DATA="/dev/mmcblk0p15"
+find_rootfs_data() {
+	local part uevent dev
+
+	if [ -e /dev/disk/by-partlabel/rootfs_data ]; then
+		readlink -f /dev/disk/by-partlabel/rootfs_data
+		return 0
+	fi
+
+	for uevent in /sys/class/block/mmcblk0p*/uevent; do
+		[ -e "$uevent" ] || continue
+		grep -q '^PARTNAME=rootfs_data$' "$uevent" || continue
+
+		part="${uevent%/uevent}"
+		dev="/dev/${part##*/}"
+		[ -b "$dev" ] && {
+			echo "$dev"
+			return 0
+		}
+	done
+
+	echo "/dev/mmcblk0p15"
+}
+
+ROOTFS_DATA="$(find_rootfs_data)"
 
 has_valid_ext4() {
 	# Check for ext4 magic number (0xEF53) at offset 0x438

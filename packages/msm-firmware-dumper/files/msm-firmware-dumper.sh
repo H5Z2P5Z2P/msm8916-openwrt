@@ -13,9 +13,41 @@ MARKER="${FLAG:-$DEFAULT_FLAG}"
 
 log() { logger -t msm-fw-dumper "$*"; }
 
+find_partlabel() {
+  label="$1"
+  link="/dev/disk/by-partlabel/$label"
+
+  case "$label" in
+    modem) partname="PARTNAME=modem" ;;
+    persist) partname="PARTNAME=persist" ;;
+    *) partname="PARTNAME=$label" ;;
+  esac
+
+  if [ -e "$link" ]; then
+    readlink -f "$link"
+    return 0
+  fi
+
+  for uevent in /sys/class/block/mmcblk0p*/uevent; do
+    [ -e "$uevent" ] || continue
+    grep -q "^$partname$" "$uevent" || continue
+
+    part="${uevent%/uevent}"
+    dev="/dev/${part##*/}"
+    if [ -b "$dev" ]; then
+      echo "$dev"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 MNT="/tmp/mnt/msmfw"
 FW="/lib/firmware"
 MCFG_REL="${MCFG_PATH:-$DEFAULT_MCFG_PATH}"
+MODEM_PART="$(find_partlabel modem || echo /dev/mmcblk0p3)"
+PERSIST_PART="$(find_partlabel persist || echo /dev/mmcblk0p6)"
 
 log "start (marker not present)"
 
@@ -23,8 +55,8 @@ log "start (marker not present)"
 mkdir -p "$MNT/modem" "$MNT/persist" "$FW/wlan/prima"
 
 # Mount partitions read-only (adjust device nodes if needed)
-mount -t vfat -o ro,nosuid,nodev,noexec,iocharset=iso8859-1,codepage=437 /dev/mmcblk0p3 "$MNT/modem" 2>/dev/null || log "WARN: modem mount failed"
-mount -t ext4 -o ro,nosuid,nodev,noexec /dev/mmcblk0p6 "$MNT/persist" 2>/dev/null || log "WARN: persist mount failed"
+mount -t vfat -o ro,nosuid,nodev,noexec,iocharset=iso8859-1,codepage=437 "$MODEM_PART" "$MNT/modem" 2>/dev/null || log "WARN: modem mount failed ($MODEM_PART)"
+mount -t ext4 -o ro,nosuid,nodev,noexec "$PERSIST_PART" "$MNT/persist" 2>/dev/null || log "WARN: persist mount failed ($PERSIST_PART)"
 
 # Copy if exists!
 copy_if() {
