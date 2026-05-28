@@ -39,11 +39,13 @@ gpt.img4  : start=264192, size=2048, type=400FFDCD-22E0-47E7-9A23-F16ED9382388, 
 gpt.img5  : start=266240, size=2048, type=400FFDCD-22E0-47E7-9A23-F16ED9382388, name="abootbak"
 gpt.img6  : start=268288, size=1024, type=098DF793-D712-413D-9D4E-89D711772228, name="rpm"
 gpt.img7  : start=269312, size=1024, type=098DF793-D712-413D-9D4E-89D711772228, name="rpmbak"
-gpt.img8  : start=270336, size=1024, type=A053AA7F-40B8-4B1C-BA08-2F68AC71A4F4, name="tz"
-gpt.img9  : start=271360, size=1024, type=A053AA7F-40B8-4B1C-BA08-2F68AC71A4F4, name="tzbak"
-gpt.img10 : start=272384, size=1024, type=E1A6A689-0C8D-4CC6-B4E8-55A4320FBD8A, name="hyp"
-gpt.img11 : start=273408, size=1024, type=E1A6A689-0C8D-4CC6-B4E8-55A4320FBD8A, name="hypbak"
-gpt.img12 : start=274432, size=2048, type=EBD0A0A2-B9E5-4433-87C0-68B6B72699C7, name="pad"
+gpt.img8  : start=270336, size=2048, type=A053AA7F-40B8-4B1C-BA08-2F68AC71A4F4, name="tz"
+gpt.img9  : start=272384, size=2048, type=A053AA7F-40B8-4B1C-BA08-2F68AC71A4F4, name="tzbak"
+gpt.img10 : start=274432, size=1024, type=E1A6A689-0C8D-4CC6-B4E8-55A4320FBD8A, name="hyp"
+gpt.img11 : start=275456, size=1024, type=E1A6A689-0C8D-4CC6-B4E8-55A4320FBD8A, name="hypbak"
+# Keep entry 12 populated so Firehose continues parsing later entries; the
+# actual pad space lives after splash to preserve stock modem partition offsets.
+gpt.img12 : start=305170, size=88046, type=20117F86-E985-4357-B9EE-374BC1D8487D, name="pad"
 gpt.img13 : start=276480, size=3072, type=EBBEADAF-22C9-E33B-8F5D-0E81686A68CB, name="modemst1"
 gpt.img14 : start=279552, size=3072, type=0A288B1F-22C9-E33B-8F5D-0E81686A68CB, name="modemst2"
 gpt.img15 : start=282624, size=2048, type=20117F86-E985-4357-B9EE-374BC1D8487D, name="misc"
